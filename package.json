@@ -1,6 +1,6 @@
 {
-  "name": "poi-plugin-unexpected-damage",
-  "version": "0.0.1",
+  "name": "poi-plugin-unexpected-damage-test",
+  "version": "0.0.2",
   "description": "A plugin which detect unexpected damage.",
   "main": "index.js",
   "scripts": {
@@ -38,9 +38,9 @@
   "license": "MIT",
   "homepage": "https://github.com/hyc1365308/plugin-battle-detail",
   "poiPlugin": {
-    "title": "Battle Records",
+    "title": "Unexpected Damage Detector",
     "description": "Save detailed battle log",
-    "icon": "fa/info-circle",
+    "icon": "fa/eye",
     "priority": 11,
     "apiVer": {
       "7.2.1": "3.5.0",
