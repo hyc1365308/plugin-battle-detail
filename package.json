@@ -1,7 +1,7 @@
 {
-  "name": "poi-plugin-battle-detail",
-  "version": "5.9.1",
-  "description": "A plugin which shows battle detail for poi.",
+  "name": "poi-plugin-unexpected-damage",
+  "version": "0.0.1",
+  "description": "A plugin which detect unexpected damage.",
   "main": "index.js",
   "scripts": {
     "reset": "git clean -f && git checkout . && git submodule foreach git checkout . && git submodule foreach git clean -f",
@@ -26,20 +26,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/poooi/plugin-battle-detail.git"
+    "url": "git+https://github.com/hyc1365308/plugin-battle-detail"
   },
   "author": {
-    "name": "Dazzy Ding",
-    "link": "https://github.com/yukixz"
+    "name": "Hyc1365308",
+    "link": "https://github.com/hyc1365308"
   },
   "contributors": [
     "Chiba"
   ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/poooi/plugin-battle-detail/issues"
-  },
-  "homepage": "https://github.com/poooi/plugin-battle-detail",
+  "homepage": "https://github.com/hyc1365308/plugin-battle-detail",
   "poiPlugin": {
     "title": "Battle Records",
     "description": "Save detailed battle log",
