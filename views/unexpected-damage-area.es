@@ -108,6 +108,7 @@ class UnexpectedDamageExecutor {
     }
 
     generateShip = (shipInfo) => {
+        console.log("Creating ship ", shipInfo)
         var mid = shipInfo.id
         var apiShipInfo = window.getStore(['const', '$ships', mid])
         if (shipInfo.owner == ShipOwner.Enemy) {
@@ -358,15 +359,16 @@ class UnexpectedDamageArea extends React.PureComponent {
   render() {
     const { simulator } = this.props
     var executor = new UnexpectedDamageExecutor(simulator)
-    // console.log(simulator)
+    console.log(simulator)
+    console.log(_sim_kcships.SHIPDATA)
     executor.init()
-    // console.log(executor.fleet)
-    // console.log(executor.enemyFleet)
+    console.log(executor.fleet)
+    console.log(executor.enemyFleet)
     executor.parseStage()
 
-    // console.log('result')
-    // console.log(executor.simulator)
-    // console.log(executor.fleet, executor.enemyFleet)
+    console.log('result')
+    console.log(executor.simulator)
+    console.log(executor.fleet, executor.enemyFleet)
     
 
     return (
