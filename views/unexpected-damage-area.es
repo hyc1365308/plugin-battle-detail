@@ -119,7 +119,6 @@ class UnexpectedDamageExecutor {
                 mid, apiShipInfo.api_name, OwnerCode.ENEMY, shipInfo.raw.api_lv,
                 shipInfo.initHP, karyoku, raisou, taiku, soukou
             )
-            _sim_kcshipdata.SHIPDATA[mid]
         } else {
             var shipObj = new ShipClass[apiShipInfo.api_stype](
                 mid, apiShipInfo.api_name, OwnerCode.OURS, shipInfo.raw.api_lv,
