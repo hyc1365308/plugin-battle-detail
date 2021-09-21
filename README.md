@@ -1,7 +1,3 @@
-# plugin-battle-detail
+# poi-plugin-unexpected-damage
 
-A plugin that showing battle detail for Poi.
-
-## Battle Pakcet Format
-
-If you want to exchange battle packet, please read [the document](./docs/packet-format-2.0.md).
+A plugin that based on poi-battle-detail.

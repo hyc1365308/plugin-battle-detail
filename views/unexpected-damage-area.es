@@ -90,7 +90,7 @@ class UnexpectedDamageRow extends React.PureComponent {
         <Row className={"unexpected-damage-row"}>
           <span><ShipInfo ship={fromShip} className={fromShipClass}/></span>
           <span>x{bonusMin.toFixed(3)}-x{bonusMax.toFixed(3)}</span>
-          <span><DamageInfo type={attack.actualAttackType} damage={[attack.damage[damageIndex]]} hit={attack.hit[damageIndex]} /></span>
+          <span><DamageInfo type={attack.actualAttackType} damage={[attack.damage[damageIndex]]} hit={[attack.hit[damageIndex]]} /></span>
           <span><FontAwesome name='long-arrow-right' /></span>
           <span><ShipInfo ship={toShip} /></span>
           <span><HPBar max={toShip.maxHP} from={toShipFromHP} to={toShipToHP} damage={[attack.damage[damageIndex]]} /></span>
@@ -238,19 +238,20 @@ class UnexpectedDamageExecutor {
                     if (attackerShip.CVshelltype && critStatus == 2) continue; // plane rank bonus too difficulte
 
                     var theoreticalPower = 0
+                    var engagementMod = EngagementMod[this.engagement.engagement]
                     if (attackTargetShip.isSub) {
                         var attackType = findKey(DayAttackTypeMap, attack.type)
                         var actualAttackType = _sim_kcsim.getActualAttackType(attackType, siList)
                         attack.actualAttackType = DayAttackTypeMap[actualAttackType]
                         theoreticalPower = _sim_kcsim.theoreticalASWPower(
-                            attackerShip, attackTargetShip, actualAttackType, EngagementMod[this.engagement.engagement], critStatus, stageInfo.subtype
+                            attackerShip, attackTargetShip, engagementMod, critStatus, stageInfo.subtype
                         )
                     } else if (stageInfo.subtype != StageType.Night) {
                         var attackType = findKey(DayAttackTypeMap, attack.type)
                         var actualAttackType = _sim_kcsim.getActualAttackType(attackType, siList)
                         attack.actualAttackType = DayAttackTypeMap[actualAttackType]
                         theoreticalPower = _sim_kcsim.theoreticalShellPower(
-                            attackerShip, attackTargetShip, actualAttackType, EngagementMod[this.engagement.engagement], critStatus
+                            attackerShip, attackTargetShip, actualAttackType, engagementMod, critStatus
                         )
                     } else if (stageInfo.subtype == StageType.Night) {
                         var attackType = findKey(NightAttackTypeMap, attack.type)
@@ -258,7 +259,7 @@ class UnexpectedDamageExecutor {
                         attack.actualAttackType = NightAttackTypeMap[actualAttackType]
                         // console.log("actualAttackType", actualAttackType)
                         theoreticalPower = _sim_kcsim.theoreticalNBPower(
-                            attackerShip, attackTargetShip, actualAttackType, EngagementMod[this.engagement.engagement], critStatus, stageInfo.engagement.fContact
+                            attackerShip, attackTargetShip, actualAttackType, engagementMod, critStatus, (stageInfo.engagement)? stageInfo.engagement.fContact: 0
                         )
                     } else {
                         // console.log("unknown shell stage ", stage)
