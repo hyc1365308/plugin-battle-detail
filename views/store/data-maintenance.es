@@ -12,7 +12,7 @@ import { indexesSelector, uiSelector } from '../selectors'
 import { boundActionCreators } from './ext-root'
 
 const { getStore } = window
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 const INDEXES_LOAD_INTERVAL = 500
 const INDEXES_LOAD_NUMBER = 500

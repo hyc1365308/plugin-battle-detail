@@ -39,6 +39,7 @@ export class Attack {
     this.fromHP  = opts.fromHP   // HP before attack.
     this.toHP    = opts.toHP     // HP after attack.
     this.useItem = opts.useItem  // int, $slotitem[] OR null
+    this.siList  = opts.siList   // special attack equip use
   }
 }
 
@@ -52,6 +53,9 @@ export const AttackType = {
   Colorado_Fire: "Colorado",    // 	Colorado戦隊、全力斉射！各個目標に砲撃開始！一気に殲滅する、Fire!!
   Kongo_Class_Kaini_C_Charge: "Kongo_Class_Kaini_C",
   Carrier_CI:           "CVCI", // 空母カットイン
+  Carrier_FBA_CI:       "CVCI (FBA)",
+  Carrier_BBA_CI:       "CVCI (BBA)",
+  Carrier_BA_CI:        "CVCI (BA)",
   Primary_Secondary_CI: "PSCI", // カットイン(主砲/副砲)
   Primary_Radar_CI    : "PRCI", // カットイン(主砲/電探)
   Primary_AP_CI       : "PACI", // カットイン(主砲/徹甲)
@@ -224,6 +228,9 @@ export const DayAttackTypeMap = {
   5: AttackType.Primary_AP_CI,
   6: AttackType.Primary_Primary_CI,
   7: AttackType.Carrier_CI,
+  71: AttackType.Carrier_FBA_CI,
+  72: AttackType.Carrier_BBA_CI,
+  73: AttackType.Carrier_BA_CI,
   100: AttackType.Nelson_Touch,
   101: AttackType.Nagato_Punch,
   102: AttackType.Mutsu_Splash,
@@ -551,6 +558,7 @@ function simulateShelling(mainFleet, escortFleet, enemyFleet, enemyEscort, houge
     if (!MultiTargetAttackType.has(attackType)) {
       let df, fromEnemy  // Declare ahead
       df = hougeki.api_df_list[i][0] // Defender
+      let si = hougeki.api_si_list[i]
       if (hougeki.api_at_eflag != null) {
         fromEnemy = hougeki.api_at_eflag[i] === 1
       } else {
@@ -588,12 +596,14 @@ function simulateShelling(mainFleet, escortFleet, enemyFleet, enemyEscort, houge
         fromHP  : fromHP,
         toHP    : toHP,
         useItem : item,
+        siList  : si,
       }))
     } else {
       const order = MultiTargetAttackOrder[attackType] || []
       for (let j = 0; j < hougeki.api_df_list[i].length; j++) {
         let df, fromEnemy  // Declare ahead
         df = hougeki.api_df_list[i][j] // Defender
+        let si = hougeki.api_si_list[i]
         let at = attacker + order[j] // Attacker
         // Tanaka bug: in combined night battle the sp attack could have wrong attacker index
         if (isNight && escortFleet && escortFleet.length && at < mainFleetRange) {
@@ -633,6 +643,7 @@ function simulateShelling(mainFleet, escortFleet, enemyFleet, enemyEscort, houge
           fromHP  : fromHP,
           toHP    : toHP,
           useItem : item,
+          siList  : si,
         }))
       }
     }
@@ -987,35 +998,35 @@ class Simulator2 {
       this.stages.push(getEngagementStage(packet))
     }
     // Day Battle
-    if (['/kcsapi/api_req_practice/battle',
-         '/kcsapi/api_req_sortie/battle',
-         '/kcsapi/api_req_sortie/airbattle',
-         '/kcsapi/api_req_sortie/ld_airbattle',
-         '/kcsapi/api_req_sortie/ld_shooting',
-         '/kcsapi/api_req_combined_battle/battle',
-         '/kcsapi/api_req_combined_battle/battle_water',
-         '/kcsapi/api_req_combined_battle/airbattle',
-         '/kcsapi/api_req_combined_battle/ld_airbattle',
-         '/kcsapi/api_req_combined_battle/ld_shooting',
-         '/kcsapi/api_req_combined_battle/ec_battle',
-         '/kcsapi/api_req_combined_battle/each_battle',
-         '/kcsapi/api_req_combined_battle/each_battle_water',
+    if (['/kcsapi/api_req_practice/battle',                          // 演习，昼战
+         '/kcsapi/api_req_sortie/battle',                            // 通常舰队，昼战
+         '/kcsapi/api_req_sortie/airbattle',                         // 通常舰队，航空战
+         '/kcsapi/api_req_sortie/ld_airbattle',                      // 通常舰队，长距离航空战
+         '/kcsapi/api_req_sortie/ld_shooting',                       // 通常舰队，敌方雷达射击
+         '/kcsapi/api_req_combined_battle/battle',                   // 联合舰队（输送/机动）VS 单舰队，昼战
+         '/kcsapi/api_req_combined_battle/battle_water',             // 联合舰队（水打）VS 单舰队，昼战
+         '/kcsapi/api_req_combined_battle/airbattle',                // 联合舰队，航空战
+         '/kcsapi/api_req_combined_battle/ld_airbattle',             // 联合舰队，长距离航空战
+         '/kcsapi/api_req_combined_battle/ld_shooting',              // 联合舰队，敌方雷达射击
+         '/kcsapi/api_req_combined_battle/ec_battle',                // 通常舰队 VS 联合舰队，昼战
+         '/kcsapi/api_req_combined_battle/each_battle',              // 联合舰队（输送/机动）VS 联合舰队，昼战
+         '/kcsapi/api_req_combined_battle/each_battle_water',        // 联合舰队（水打）VS 联合舰队，昼战
     ].includes(path)) {
       this.prcsDay(packet, path)
     }
     // Night Battle
-    if (['/kcsapi/api_req_practice/midnight_battle',
-         '/kcsapi/api_req_battle_midnight/battle',
-         '/kcsapi/api_req_battle_midnight/sp_midnight',
-         '/kcsapi/api_req_combined_battle/midnight_battle',
-         '/kcsapi/api_req_combined_battle/sp_midnight',
-         '/kcsapi/api_req_combined_battle/ec_midnight_battle',
+    if (['/kcsapi/api_req_practice/midnight_battle',                 // 演习，夜战
+         '/kcsapi/api_req_battle_midnight/battle',                   // 通常舰队 VS 通常舰队，夜战
+         '/kcsapi/api_req_battle_midnight/sp_midnight',              // 通常舰队，开幕夜战
+         '/kcsapi/api_req_combined_battle/midnight_battle',          // 12 VS 6，夜战
+         '/kcsapi/api_req_combined_battle/sp_midnight',              // 12 VS 6，开幕夜战
+         '/kcsapi/api_req_combined_battle/ec_midnight_battle',       // 通常舰队 VS 联合舰队，夜战
          '!COMPAT/midnight_battle',
     ].includes(path)) {
       this.prcsNight(packet, path)
     }
     // Night to Day
-    if (['/kcsapi/api_req_combined_battle/ec_night_to_day'].includes(path)) {
+    if (['/kcsapi/api_req_combined_battle/ec_night_to_day'].includes(path)) {  // 通常舰队 VS 联合舰队，夜转昼
       this.prcsNight(packet, path)
       this.prcsDay(packet, path)
     }

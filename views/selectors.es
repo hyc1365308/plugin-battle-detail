@@ -8,7 +8,7 @@ import {
 import { initState } from './store'
 
 const extSelector = createSelector(
-  extensionSelectorFactory('poi-plugin-battle-detail'),
+  extensionSelectorFactory('poi-plugin-unexpected-damage-test'),
   ext => _.isEmpty(ext) ? initState : ext)
 
 window.getExt = () => {

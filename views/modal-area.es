@@ -7,7 +7,7 @@ import { PTyp } from './ptyp'
 import { boundActionCreators } from './store'
 import { modalSelector } from './selectors'
 
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 const modifyModal = modifier =>
   boundActionCreators.uiModify(modifyObject('modal', modifier))

@@ -22,17 +22,17 @@ import {
 const mergeIndexes = unionSorted((x,y) => y.id - x.id)
 
 const reducer = (state = [], action) => {
-  if (action.type === '@poi-plugin-battle-detail@atomicReplaceIndexes') {
+  if (action.type === '@poi-plugin-unexpected-damage-test@atomicReplaceIndexes') {
     const {indexes} = action
     return indexes
   }
 
-  if (action.type === '@poi-plugin-battle-detail@indexesMerge') {
+  if (action.type === '@poi-plugin-unexpected-damage-test@indexesMerge') {
     const {newIndexes} = action
     return mergeIndexes(state, newIndexes)
   }
 
-  if (action.type === '@poi-plugin-battle-detail@notifyIndex') {
+  if (action.type === '@poi-plugin-unexpected-damage-test@notifyIndex') {
     const {newId, newIndex} = action
 
     if (_.isEqual(state[0], newIndex)) {
@@ -54,7 +54,7 @@ const reducer = (state = [], action) => {
 
 const actionCreators = {
   indexesMerge: newIndexes => ({
-    type: '@poi-plugin-battle-detail@indexesMerge',
+    type: '@poi-plugin-unexpected-damage-test@indexesMerge',
     newIndexes,
   }),
 }

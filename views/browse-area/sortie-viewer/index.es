@@ -37,7 +37,7 @@ import {
   getFcdMapInfoFuncSelector,
 } from '../../store/records'
 
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 const battleReplayerURL = 'https://kc3kai.github.io/kancolle-replay/battleplayer.html'
 
@@ -70,7 +70,7 @@ const rankColors = {
   'E': '#03a9f4',
 }
 
-@withTranslation('poi-plugin-battle-detail')
+@withTranslation('poi-plugin-unexpected-damage-test')
 class SortieViewerImpl extends PureComponent {
   static propTypes = {
     // connected

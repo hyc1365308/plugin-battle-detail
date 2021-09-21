@@ -11,7 +11,7 @@ import { showModal } from './modal-area'
 import { PacketCompat } from '../lib/compat'
 
 const {clipboard} = require('electron')
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 class OptionArea extends React.Component {
   shouldComponentUpdate(nextProps) {

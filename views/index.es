@@ -10,6 +10,7 @@ import { join } from 'path-extra'
 import ModalArea from './modal-area'
 import OptionArea from './option-area'
 import OverviewArea from './overview-area'
+import UnexpectedDamageArea from './unexpected-damage-area'
 import DetailArea from './detail-area'
 import BrowseArea from './browse-area'
 import AppData from '../lib/appdata'
@@ -23,7 +24,7 @@ import { PTyp } from './ptyp'
 import { globalSubscribe, globalUnsubscribe } from './observers'
 
 const { ipc } = window
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 const pm = new PacketManager()
 const em = new EventEmitter()
@@ -145,6 +146,7 @@ class MainAreaImpl extends React.Component {
             <div id="battle-area" ref={this.battleArea}>
               <OverviewArea simulator={simulator} stages={stages} />
               <DetailArea simulator={simulator} stages={stages} />
+              <UnexpectedDamageArea simulator={simulator} stages={stages} />
             </div>
           </Tab>
           <Tab eventKey={1} title={__("Browse")} disabled={disableBrowser}>

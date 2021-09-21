@@ -7,7 +7,7 @@ import { Simulator, Models } from '../lib/battle'
 const { Battle, BattleType, Fleet } = Models
 const { Rank } = Models
 const { getStore } = window
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 function tree2path(tree) {
   const pathes = []

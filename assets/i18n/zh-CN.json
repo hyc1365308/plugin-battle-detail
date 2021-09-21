@@ -4,6 +4,7 @@
   "__COMMENT_003__": "Sort phrase by first exist line number inside a block.",
 
   "Unexpected Damage Detector": "异常伤害",
+  "Unexpected Damage": "异常伤害",
   "Save detailed battle log": "保存详细的战斗日志",
 
   "Battle": "战斗",
@@ -55,6 +56,7 @@
   "Diamond": "轮型阵",
   "Echelon": "梯形阵",
   "Line Abreast": "单横阵",
+  "Vanguard": "警戒阵",
   "Cruising Formation 1 (anti-sub)": "第一警戒航行序列（对潜警戒）",
   "Cruising Formation 2 (forward)": "第二警戒航行序列（前方警戒）",
   "Cruising Formation 3 (ring)": "第三警戒航行序列（轮型阵）",
@@ -82,6 +84,9 @@
   "AT_Colorado_Fire": "科↗罗↘拉↗多↘",
   "AT_Kongo_Class_Kaini_C_Charge": "僚舰夜战突击",
   "AT_Carrier_CI": "空母CI",
+  "AT_Carrier_FBA_CI": "空母CI (FBA)",
+  "AT_Carrier_BBA_CI": "空母CI (BBA)",
+  "AT_Carrier_BA_CI": "空母CI (BA)",
   "AT_Primary_Secondary_CI": "主副CI",
   "AT_Primary_Radar_CI": "主电CI",
   "AT_Primary_AP_CI": "主彻CI",

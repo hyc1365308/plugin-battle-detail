@@ -5,14 +5,14 @@ import React, { Fragment } from 'react'
 import { Panel, OverlayTrigger, Tooltip, Row } from 'react-bootstrap'
 import cls from 'classnames'
 
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 import { HPBar } from './bar'
 import { getShipName, getItemName } from './utils'
 
 import {
   StageType, AttackType, HitType, ShipOwner,
-  AirControl, Engagement, Formation, Detection,
+  AirControl, Engagement, Formation, Detection, DayAttackTypeMap
 } from '../lib/battle'
 
 
@@ -37,6 +37,7 @@ const FormationName = {
   [Formation.Diamond]: __("Diamond"),
   [Formation.Echelon]: __("Echelon"),
   [Formation.Abreast]: __("Line Abreast"),
+  [Formation.Vanguard]: __("Vanguard"),
   [Formation.CruisingAntiSub]: __("Cruising Formation 1 (anti-sub)"),
   [Formation.CruisingForward]: __("Cruising Formation 2 (forward)"),
   [Formation.CruisingDiamond]: __("Cruising Formation 3 (ring)"),
@@ -62,6 +63,9 @@ const AttackTypeName = {
   [AttackType.Colorado_Fire             ]: __("AT_Colorado_Fire"),
   [AttackType.Kongo_Class_Kaini_C_Charge]: __("AT_Kongo_Class_Kaini_C_Charge"),
   [AttackType.Carrier_CI                ]: __("AT_Carrier_CI"),
+  [AttackType.Carrier_FBA_CI            ]: __("AT_Carrier_FBA_CI"),
+  [AttackType.Carrier_BBA_CI            ]: __("AT_Carrier_BBA_CI"),
+  [AttackType.Carrier_BA_CI             ]: __("AT_Carrier_BA_CI"),
   [AttackType.Primary_Secondary_CI      ]: __("AT_Primary_Secondary_CI"),
   [AttackType.Primary_Radar_CI          ]: __("AT_Primary_Radar_CI"),
   [AttackType.Primary_AP_CI             ]: __("AT_Primary_AP_CI"),
@@ -195,12 +199,12 @@ class AerialTable extends React.Component {
 
 class ShipInfo extends React.Component {
   render() {
-    const {ship} = this.props
+    const {ship, className} = this.props
     if (ship == null) return <span />
 
     return (
       <span>
-        <span>{getShipName(ship.id)}</span>
+        <span className={className}>{getShipName(ship.id)}</span>
         <span className="position-indicator">{`(${ship.pos})`}</span>
       </span>
     )
@@ -209,7 +213,7 @@ class ShipInfo extends React.Component {
 
 const DamageInfo = ({type, damage, hit}) => (
   <span>
-    {AttackTypeName[type]} (
+    {(AttackTypeName[type])? AttackTypeName[type]: AttackTypeName[DayAttackTypeMap[type]]} (
     {damage.map((current, i) => (
       <Fragment key={i}>
         <span className={cls({ critical: hit[i] === HitType.Critical })}>{hit[i] === HitType.Miss ? 'miss' : current}</span>
@@ -262,15 +266,9 @@ class AttackTable extends React.Component {
 }
 
 
-class StageTable extends React.Component {
-  render() {
-    const {stage} = this.props
-    if (stage == null) return <div />
-
-    let tables = []
-    let title = null
-
-    switch (stage.type) {
+export function getStageName(stage) {
+  let title = null
+  switch (stage.type) {
     case StageType.Engagement:
       break
     case StageType.Aerial:
@@ -322,7 +320,18 @@ class StageTable extends React.Component {
       else
         title = `${__('Land Base Air Corps')} - No.${stage.kouku.api_base_id}`
       break
-    }
+  }
+  return title
+}
+
+
+class StageTable extends React.Component {
+  render() {
+    const {stage} = this.props
+    if (stage == null) return <div />
+
+    let tables = []
+    let title = getStageName(stage)
 
     if (stage.engagement != null)
       tables.push(<EngagementTable key={2} engagement={stage.engagement} />)
@@ -366,3 +375,4 @@ class DetailArea extends React.Component {
 }
 
 export default DetailArea
+export { EngagementTable, ShipInfo, DamageInfo }

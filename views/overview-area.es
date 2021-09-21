@@ -10,7 +10,7 @@ import { SlotitemIcon } from 'views/components/etc/icon'
 import { FABar, HPBar } from './bar'
 
 const { ROOT, getStore } = window
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 const DEFAULT_EXPANDED = false
 class OverviewArea extends React.PureComponent {

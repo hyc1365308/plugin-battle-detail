@@ -31,17 +31,17 @@ const initState = List()
  */
 
 const reducer = (state = initState, action) => {
-  if (action.type === '@poi-plugin-battle-detail@atomicReplaceIndexes') {
+  if (action.type === '@poi-plugin-unexpected-damage-test@atomicReplaceIndexes') {
     const {sortieIndexes} = action
     return sortieIndexes
   }
 
-  if (action.type === '@poi-plugin-battle-detail@sortieIndexesModify') {
+  if (action.type === '@poi-plugin-unexpected-damage-test@sortieIndexesModify') {
     const {modifier} = action
     return modifier(state)
   }
 
-  if (action.type ===  '@poi-plugin-battle-detail@notifyIndex') {
+  if (action.type ===  '@poi-plugin-unexpected-damage-test@notifyIndex') {
     const {newId, newIndex, curStore} = action
     return insertIndex(curStore)(state, newId, newIndex)
   }
@@ -51,7 +51,7 @@ const reducer = (state = initState, action) => {
 
 const actionCreators = {
   sortieIndexesModify: modifier => ({
-    type: '@poi-plugin-battle-detail@sortieIndexesModify',
+    type: '@poi-plugin-unexpected-damage-test@sortieIndexesModify',
     modifier,
   }),
 }

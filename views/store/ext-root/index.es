@@ -31,7 +31,7 @@ const actionCreators = {
      */
     const curStore = getState()
     dispatch({
-      type: '@poi-plugin-battle-detail@notifyIndex',
+      type: '@poi-plugin-unexpected-damage-test@notifyIndex',
       newId, newIndex, curStore,
     })
   },
@@ -43,7 +43,7 @@ const actionCreators = {
     const curStore = getState()
     const sortieIndexes = groupBattleIndexes(curStore)(indexes)
     dispatch({
-      type: '@poi-plugin-battle-detail@atomicReplaceIndexes',
+      type: '@poi-plugin-unexpected-damage-test@atomicReplaceIndexes',
       indexes, sortieIndexes,
     })
   },

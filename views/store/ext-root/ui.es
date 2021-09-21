@@ -42,7 +42,7 @@ const initState = {
 }
 
 const reducer = (state = initState, action) => {
-  if (action.type === '@poi-plugin-battle-detail@uiModify') {
+  if (action.type === '@poi-plugin-unexpected-damage-test@uiModify') {
     const {modifier} = action
     return modifier(state)
   }
@@ -52,7 +52,7 @@ const reducer = (state = initState, action) => {
 
 const actionCreators = {
   uiModify: modifier => ({
-    type: '@poi-plugin-battle-detail@uiModify',
+    type: '@poi-plugin-unexpected-damage-test@uiModify',
     modifier,
   }),
 }

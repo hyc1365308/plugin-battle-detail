@@ -17,7 +17,7 @@ import { getMapNodeLetterFuncSelector } from './selectors'
 import steg from '../../../assets/js/steganography.min.js'
 
 const { POI_VERSION } = window
-const { __ } = window.i18n["poi-plugin-battle-detail"]
+const { __ } = window.i18n["poi-plugin-unexpected-damage-test"]
 
 /*
    replay image generation. kc3kai style png image with battle data encoded.
@@ -41,7 +41,7 @@ const { __ } = window.i18n["poi-plugin-battle-detail"]
 const battleReplayerURL = 'https://kc3kai.github.io/kancolle-replay/battleplayer.html'
 const imagesPath = join(__dirname, '..','..','..','assets','images')
 
-@withTranslation('poi-plugin-battle-detail')
+@withTranslation('poi-plugin-unexpected-damage-test')
 class ReplayGeneratorImpl extends PureComponent {
   static propTypes = {
     rep: PTyp.object.isRequired,
