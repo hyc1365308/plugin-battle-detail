@@ -360,7 +360,7 @@ class UnexpectedDamageArea extends React.PureComponent {
     const { simulator } = this.props
     var executor = new UnexpectedDamageExecutor(simulator)
     console.log(simulator)
-    console.log(_sim_kcships.SHIPDATA)
+    console.log(_sim_kcshipdata.SHIPDATA)
     executor.init()
     console.log(executor.fleet)
     console.log(executor.enemyFleet)
