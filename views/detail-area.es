@@ -72,6 +72,22 @@ const AttackTypeName = {
   [AttackType.Primary_Primary_CI        ]: __("AT_Primary_Primary_CI"),
   [AttackType.Primary_Torpedo_CI        ]: __("AT_Primary_Torpedo_CI"),
   [AttackType.Torpedo_Torpedo_CI        ]: __("AT_Torpedo_Torpedo_CI"),
+
+  [AttackType.Primary_Torpedo_Radar_CI            ]: __("AT_GTR_CI"),
+  [AttackType.Lookouter_Torpedo_Radar_CI          ]: __("AT_LTR_CI"),
+  [AttackType.Lookouter_Torpedo_CI                ]: __("AT_LTT_CI"),
+  [AttackType.Lookouter_Torpedo_Drum_CI           ]: __("AT_LTD_CI"),
+  [AttackType.Primary_Torpedo_Radar_CI_Double     ]: __("AT_GTR_CI_double"),
+  [AttackType.Lookouter_Torpedo_Radar_CI_Double   ]: __("AT_LTR_CI_double"),
+  [AttackType.Lookouter_Torpedo_CI_Double         ]: __("AT_LTT_CI_double"),
+  [AttackType.Lookouter_Torpedo_Drum_CI_Double    ]: __("AT_LTD_CI_double"),
+
+  [AttackType.Sub_Torpedo_CI                      ]: __("AT_Sub_TT_CI"),
+  [AttackType.Sub_Torpedo_Radar_CI                ]: __("AT_Sub_TR_CI"),
+  [AttackType.Carrier_Night_CI                    ]: __("AT_Carrier_Night_CI"),
+  [AttackType.Carrier_Night_CI_3                  ]: __("AT_Carrier_Night_CI_3"),
+  [AttackType.Carrier_Night_CI_2                  ]: __("AT_Carrier_Night_CI_2"),
+  [AttackType.Carrier_Night_CI_1                  ]: __("AT_Carrier_Night_CI_1"),
 }
 
 
@@ -213,7 +229,7 @@ class ShipInfo extends React.Component {
 
 const DamageInfo = ({type, damage, hit}) => (
   <span>
-    {(AttackTypeName[type])? AttackTypeName[type]: AttackTypeName[DayAttackTypeMap[type]]} (
+    {AttackTypeName[type]} (
     {damage.map((current, i) => (
       <Fragment key={i}>
         <span className={cls({ critical: hit[i] === HitType.Critical })}>{hit[i] === HitType.Miss ? 'miss' : current}</span>
@@ -226,7 +242,7 @@ const DamageInfo = ({type, damage, hit}) => (
 
 class AttackRow extends React.Component {
   render() {
-    const {type, fromShip, toShip, fromHP, toHP, damage, hit, useItem} = this.props.attack
+    const {type, actualAttackType, fromShip, toShip, fromHP, toHP, damage, hit, useItem} = this.props.attack
     const {maxHP} = toShip
     const totalDamage = damage.reduce((p, x) => p + x)
     // Is enemy attack?
@@ -235,7 +251,7 @@ class AttackRow extends React.Component {
         <span><HPBar max={maxHP} from={fromHP} to={toHP} damage={totalDamage} item={useItem} /></span>
         <span><ShipInfo ship={toShip} /></span>
         <span><FontAwesome name='long-arrow-left' /></span>
-        <span><DamageInfo type={type} damage={damage} hit={hit} /></span>
+        <span><DamageInfo type={actualAttackType? actualAttackType: type} damage={damage} hit={hit} /></span>
         <span></span>
         <span><ShipInfo ship={fromShip} /></span>
         <span></span>
@@ -245,7 +261,7 @@ class AttackRow extends React.Component {
         <span></span>
         <span><ShipInfo ship={fromShip} /></span>
         <span></span>
-        <span><DamageInfo type={type} damage={damage} hit={hit} /></span>
+        <span><DamageInfo type={actualAttackType? actualAttackType: type} damage={damage} hit={hit} /></span>
         <span><FontAwesome name='long-arrow-right' /></span>
         <span><ShipInfo ship={toShip} /></span>
         <span><HPBar max={maxHP} from={fromHP} to={toHP} damage={totalDamage} item={useItem} /></span>

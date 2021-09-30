@@ -60,7 +60,7 @@ const OwnerCode = {
     ENEMY: 1,
 }
 
-const CHECK_THRES = 1.03 // data will be listed in unexpected damage area if bonusMin > CHECK_THRES
+const CHECK_THRES = 0 // data will be listed in unexpected damage area if bonusMin > CHECK_THRES
 
 function findKey (obj, value, compare = (a, b) => a === b) {
     return Object.keys(obj).find(k => compare(obj[k], value))
@@ -210,8 +210,10 @@ class UnexpectedDamageExecutor {
 
     parseEngagementStage = (stageInfo) => {
         this.fFormation = findKey(FormationMap, stageInfo.engagement.fFormation)
+        this.eFormation = findKey(FormationMap, stageInfo.engagement.eFormation)
         this.engagement = stageInfo.engagement
         this.fleet.setFormation(this.fFormation, this.simulator.fleetType)
+        this.enemyFleet.setFormation(this.eFormation, this.simulator.enemyEscort? 1: 0)
     }
 
     parseShellStage = (stageInfo) => {
@@ -222,7 +224,7 @@ class UnexpectedDamageExecutor {
                 if (damage == 0) continue;
 
                 var attackTargetShip = this.getAttackTarget(attack)
-                if (attack.fromShip.owner == ShipOwner.Friend) {  // Todo: supply friend fleet
+                if (attack.fromShip.owner == ShipOwner.Friend || attack.fromShip.owner == ShipOwner.Enemy) {  // Todo: supply friend fleet
                     this.doDamage(attackTargetShip, damage)
                     continue
                 }
@@ -233,8 +235,6 @@ class UnexpectedDamageExecutor {
                     var siList = attack.siList.map(equip_id => { return (equip_id == -1)? equip_id: getStore(['const', '$equips', equip_id])})
 
                     var critStatus = attack.hit[subIndex]
-                    if (attackTargetShip.isPT) continue;
-                    if (attackerShip.CVshelltype && critStatus == 2) continue; // plane rank bonus too difficulte
 
                     var theoreticalPower = 0
                     var engagementMod = EngagementMod[this.engagement.engagement]
@@ -242,6 +242,10 @@ class UnexpectedDamageExecutor {
                         var attackType = findKey(DayAttackTypeMap, attack.type)
                         var actualAttackType = _sim_kcsim.getActualAttackType(attackType, siList)
                         attack.actualAttackType = DayAttackTypeMap[actualAttackType]
+                        if (attackTargetShip.isPT || (attackerShip.CVshelltype && (critStatus == 2 || stageInfo.subtype == StageType.Night))) {
+                            this.doDamage(attackTargetShip, damage)
+                            continue;
+                        }
                         theoreticalPower = _sim_kcsim.theoreticalASWPower(
                             attackerShip, attackTargetShip, engagementMod, critStatus, stageInfo.subtype
                         )
@@ -249,6 +253,10 @@ class UnexpectedDamageExecutor {
                         var attackType = findKey(DayAttackTypeMap, attack.type)
                         var actualAttackType = _sim_kcsim.getActualAttackType(attackType, siList)
                         attack.actualAttackType = DayAttackTypeMap[actualAttackType]
+                        if (attackTargetShip.isPT || (attackerShip.CVshelltype && (critStatus == 2 || stageInfo.subtype == StageType.Night))) {
+                            this.doDamage(attackTargetShip, damage)
+                            continue;
+                        }
                         theoreticalPower = _sim_kcsim.theoreticalShellPower(
                             attackerShip, attackTargetShip, actualAttackType, engagementMod, critStatus
                         )
@@ -256,12 +264,15 @@ class UnexpectedDamageExecutor {
                         var attackType = findKey(NightAttackTypeMap, attack.type)
                         var actualAttackType = _sim_kcsim.getActualNBAttackType(attackType, siList)
                         attack.actualAttackType = NightAttackTypeMap[actualAttackType]
-                        // console.log("actualAttackType", actualAttackType)
+                        if (attackTargetShip.isPT || (attackerShip.CVshelltype && (critStatus == 2 || stageInfo.subtype == StageType.Night))) {
+                            this.doDamage(attackTargetShip, damage)
+                            continue;
+                        }
                         theoreticalPower = _sim_kcsim.theoreticalNBPower(
                             attackerShip, attackTargetShip, actualAttackType, engagementMod, critStatus, (stageInfo.engagement)? stageInfo.engagement.fContact: 0
                         )
                     } else {
-                        // console.log("unknown shell stage ", stage)
+                        console.log("unknown shell stage ", stage)
                     }
                     
                     var bonusMin = (damage / ((attackerShip.ammoleft <= 5)? attackerShip.ammoleft * 0.2: 1) + 0.7 * attackTargetShip.AR) / theoreticalPower
@@ -286,7 +297,33 @@ class UnexpectedDamageExecutor {
             for (let subIndex=0; subIndex < stageInfo.attacks[index].damage.length; subIndex ++) {
                 var attack = stageInfo.attacks[index]
                 var damage = attack.damage[subIndex]
+                if (damage == 0) continue;
+
                 var attackTargetShip = this.getAttackTarget(attack)
+                if (attack.fromShip.owner == ShipOwner.Friend) {  // Todo: supply friend fleet
+                    this.doDamage(attackTargetShip, damage)
+                    continue
+                }
+                var attackerShip = this.getAttacker(attack)
+                if (!_sim_kcsim.isScratchDamage(attackTargetShip.HP, damage) && attackTargetShip.side == OwnerCode.ENEMY) {
+                    var engagementMod = EngagementMod[this.engagement.engagement]
+                    var critStatus = attack.hit[subIndex]
+                    attack.actualAttackType = attack.type
+                    var theoreticalPower = _sim_kcsim.theoreticalTorpPower(
+                        attackerShip, attackTargetShip, engagementMod, critStatus
+                    )
+                    var bonusMin = (damage / ((attackerShip.ammoleft <= 5)? attackerShip.ammoleft * 0.2: 1) + 0.7 * attackTargetShip.AR) / theoreticalPower
+                    var bonusMax = ((damage + 0.999) / ((attackerShip.ammoleft <= 5)? attackerShip.ammoleft * 0.2: 1) - 0.6 + 1.3 * attackTargetShip.AR) / theoreticalPower
+                    if (bonusMin > CHECK_THRES) {
+                        stageInfo.unexpectedDamageList.push({
+                            attackerHP: attackerShip.HP,
+                            attack: attack,
+                            damageIndex: subIndex,
+                            bonusMin: bonusMin,
+                            bonusMax: bonusMax,
+                        })
+                    }
+                }
                 this.doDamage(attackTargetShip, damage)
             }
         }
@@ -348,6 +385,24 @@ class UnexpectedDamageExecutor {
         })
         return tables
     }
+
+    view = () => {
+        this.init()
+        this.parseStage()
+        // console.log(this.simulator)
+        return (
+            <Panel.Body>
+              <div className={"stage-table"}>
+                <div className={"stage-title"}></div>
+                  <EngagementTable engagement={this.engagement} />
+                <hr />
+              </div>
+              {
+                this.generateResult() 
+              }
+            </Panel.Body>
+        )
+    }
 }
 
 
@@ -356,18 +411,8 @@ class UnexpectedDamageArea extends React.PureComponent {
 
   render() {
     const { simulator } = this.props
-    var executor = new UnexpectedDamageExecutor(simulator)
     // console.log(simulator)
-    executor.init()
-    // console.log(executor.fleet)
-    // console.log(executor.enemyFleet)
-    executor.parseStage()
-
-    // console.log('result')
-    // console.log(executor.simulator)
-    // console.log(executor.fleet, executor.enemyFleet)
-    
-
+    var executor = new UnexpectedDamageExecutor(simulator)
     return (
       <div id="detail-area">
         <Panel
@@ -379,14 +424,9 @@ class UnexpectedDamageArea extends React.PureComponent {
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
-          <Panel.Body>
-            <div className={"stage-table"}>
-              <div className={"stage-title"}></div>
-                <EngagementTable engagement={executor.engagement} />
-              <hr />
-            </div>
-            { executor.generateResult() }
-          </Panel.Body>
+          {
+            (simulator.stages && simulator.stages.filter(stage => stage !== null).length == 0)? __("No battle"): executor.view()
+          }
         </Panel.Collapse>
         </Panel>
       </div>
